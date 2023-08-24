@@ -1,3 +1,4 @@
+import putil
 import numpy as np
 import gzip, sys
 import matplotlib.pyplot as plt
@@ -23,9 +24,9 @@ def get_label_data(path: str):
         return labels
 
 
-def get_train_data():
-    images = get_image_data('./train-images-idx3-ubyte.gz')
-    labels = get_label_data('./train-labels-idx1-ubyte.gz')
+def get_train_data(num=None):
+    images = get_image_data('./train-images-idx3-ubyte.gz')[:num]
+    labels = get_label_data('./train-labels-idx1-ubyte.gz')[:num]
     return images, labels
 
 
@@ -36,11 +37,15 @@ def get_test_data():
 
 
 def main():
-    x_train, y_train = get_train_data()
+    x_train, y_train = get_train_data(50)
     # plt.imshow(x_train[2])
     # plt.show()
     # print(labels[2])
-
+    x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1] * x_train.shape[2]))
+    # print(x_train.shape)
+    # print(y_train.shape)
+    model = putil.Softmax()
+    print(model.cost(x_train, y_train, np.zeros((784, 10)), np.ones(10)))
 
 if __name__ == '__main__':
     main()
