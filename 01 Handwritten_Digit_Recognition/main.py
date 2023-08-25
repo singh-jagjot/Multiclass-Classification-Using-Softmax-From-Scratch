@@ -37,15 +37,23 @@ def get_test_data():
 
 
 def main():
-    x_train, y_train = get_train_data(50)
+    x_train, y_train = get_train_data(2)
+    outputs_n = 10
     # plt.imshow(x_train[2])
     # plt.show()
     # print(labels[2])
     x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1] * x_train.shape[2]))
     # print(x_train.shape)
     # print(y_train.shape)
+    W = np.random.random((x_train.shape[1], outputs_n))
+    b = np.random.random(outputs_n)
+    # print(W.shape, b.shape)
     model = putil.Softmax()
-    print(model.cost(x_train, y_train, np.zeros((784, 10)), np.ones(10)))
-
+    # model.fit(x_train, y_train, np.zeros((784, 10)), np.ones(10))
+    model.fit(x_train, y_train, W, b)
+    model._get_cost()
+    model._get_gradient()
+    # model.fit(np.arange(12).reshape((-1,3)), np.arange(4), np.zeros((3,4)), np.array([2,4,6,8]))
+    # model._get_f_wb()
 if __name__ == '__main__':
     main()
