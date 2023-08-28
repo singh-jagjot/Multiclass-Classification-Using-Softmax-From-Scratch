@@ -1,8 +1,7 @@
-import putil
+import Softmax
 import numpy as np
 import pickle
-import gzip, sys
-import matplotlib.pyplot as plt
+import gzip
 
 
 def get_image_data(path: str):
@@ -49,60 +48,64 @@ def load_data(file_name):
     return data
 
 def main():
+    # Getting training data
+    # (x_train : 60000 images, shape = (60000, 28, 28))
+    # (y_train : 60000 image labels, shape = (60000,))
     x_train, y_train = get_train_data()
-    # Number of classes
+
+    # Number of classes (0,1,2 ... 9)
     c = 10
-    # plt.imshow(x_train[2])
-    # plt.show()
-    # print(labels[2])
+
+    # Setting training data(x_train) shape to (60000, 28*28)
     x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1] * x_train.shape[2]))
+    
+    # Normalize x_train
     x_train = x_train / 255.0
+    
+    # Setting weights and bias with random values
     m, n = x_train.shape
-    np.random.seed(10)
+    # np.random.seed(10)
     W = np.random.random((n, c))
-    np.random.seed(10)
+    # np.random.seed(10)
     b = np.random.random(c)
 
-    model = putil.Softmax()
+    # Initializing ML model
+    model = Softmax.Softmax()
+
+    # Setting up model with required parameters
+    # labels data(y_train) will be one-hot encoded
     model.fit(x_train, y_train, W, b)
-    # model.normalize_data()
-    model.optimize(1, 2000)
 
-    data = model.get_weights_bias()
-    FILE_NAME = 'data0.pkl'
-    save_data(data, FILE_NAME)
-    # W2, b2 = load_data(FILE_NAME)
-    # model2 = putil.Softmax()
-    # model2.set_weight(W2)
-    # model2.set_bias(b2)
-    # print(model._get_cost(), m._get_cost())
-    # mu, sigma = model.get_normailizing_data()
-    # x_train = (x_train - mu) / sigma
+    # Starting 'Gradient Descent'
+    model.optimize(1, 1000)
+
+    # Saving weights and bias for later use if needed.
+    # data = model.get_weights_bias()
+    # FILE_NAME = 'data0.pkl'
+    # save_data(data, FILE_NAME)
+    
+    # Getting test data
+    # (x_test : 10000 images, shape = (10000, 28, 28))
+    # (y_test : 10000 image labels, shape = (10000,))
     x_test, y_test = get_test_data()
-    x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1] * x_test.shape[2]))
-    x_test = x_test / 255.0
-    # x_test = (x_test - mu) / sigma
 
+    # Setting testing data(x_test) shape to (10000, 28*28)
+    x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1] * x_test.shape[2]))
+
+    # Normalize x_test
+    x_test = x_test / 255.0
+
+    # Getting predictions on both test and training data
     train_predictions = model.predict(x_train)
     test_predictions = model.predict(x_test)
+
+    # Getting accuracy of the predictions
     train_accuracy = get_accuracy(y_train, train_predictions)
     test_accuracy = get_accuracy(y_test, test_predictions)
+
+    # Comparing accuracy of training data with testing data
     print("Train Accuracy: {:.3f}%\nTest Accuracy: {:.3f}%".format(train_accuracy, test_accuracy))
 
-def main2():
-    FILE_NAME = 'data0.pkl'
-    W, b = load_data(FILE_NAME)
-    model = putil.Softmax()
-    model.set_weight(W)
-    model.set_bias(b)
 
-    x_test, y_test = get_test_data()
-    x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1] * x_test.shape[2]))
-    x_test = x_test / 255.0
-
-    test_predictions = model.predict(x_test)
-    test_accuracy = get_accuracy(y_test, test_predictions)
-    print('Accuracy: ', test_accuracy, "%")
 if __name__ == '__main__':
-    # main()
-    main2()
+    main()

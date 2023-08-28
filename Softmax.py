@@ -50,6 +50,7 @@ class Softmax:
     #     f_wb = self._softmax(z)
     #     # print('fwb',f_wb)
     #     return f_wb
+
     def _one_hot_enc(self):
         _, c = self.W.shape
         y_hot = np.zeros((len(self.y), c))
@@ -68,7 +69,7 @@ class Softmax:
         # print('t1', time.time() - t)
 
         # Below code works without log(0) errors
-        # Weights are in columns as w1 in column 1, w2 in column 2 and so on.
+        # Weights are in columns as w1(28*28) in column 1, w2 in column 2 and so on.
         z = np.matmul(X, W) + b
         z_max = np.max(z, axis=1).reshape((z.shape[0], 1))
         z_new = z - z_max
