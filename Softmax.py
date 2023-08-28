@@ -10,7 +10,7 @@ class Softmax:
         self.y_hot: np.ndarray = None
         self.W: np.ndarray = None
         self.b: np.ndarray = None
-        self.mu :None
+        self.mu: None
         self.sigma = None
 
     def set_weight(self, W):
@@ -75,36 +75,20 @@ class Softmax:
         z_new = z - z_max
         ez_new = np.exp(z_new)
         ez_sum = np.sum(ez_new, axis=1).reshape((-1, 1))
-        # print('z',z)
-        # print('y', y)
-        # print('z_max',z_max)
-        # print('z_new',z_new)
-        # print('ez_new',ez_new)
-        # print('ez_sum',ez_sum)
         log_softmax = z_new - np.log(ez_sum)
-        # print(log_softmax)
         loss = -log_softmax[np.arange(y.shape[0]), y]
-        # print(loss)
         cost = np.mean(loss)
-        # print('cost', cost)
         return cost
 
     def _get_gradient(self):
         X, y, W, b, y_hot = self.X, self.y, self.W, self.b, self.y_hot
         z = np.matmul(X, W) + b
         f_wb = self._softmax(z)
-        y_hat = f_wb[np.arange(y.shape[0]), y]
         m, n = X.shape
 
         dj_dw = np.matmul(X.T, f_wb - y_hot) / m
         dj_db = np.sum(f_wb - y_hot, axis=0) / m
-        # print(f_wb.shape)
-        # print(y_hot.shape)
-        # print(f_wb.shape)
-        # print(W.shape)
-        # print(b.shape)
-        # print(dj_dw)
-        # print(dj_db)
+
         return dj_dw, dj_db
 
     def _gradient_descent(self, alpha, epochs):
@@ -113,7 +97,6 @@ class Softmax:
             dj_dw, dj_db = self._get_gradient()
             self.W -= alpha * dj_dw
             self.b -= alpha * dj_db
-            # print(dj_db)
             if (epoch + 1) % 10 == 0 or epoch + 1 == epochs or epoch == 0:
                 print("Epoch {}, cost: {}".format(epoch+1, self._get_cost()))
 
