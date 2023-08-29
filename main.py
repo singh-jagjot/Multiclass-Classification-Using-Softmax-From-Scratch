@@ -71,7 +71,8 @@ def main():
     # Setting weights and bias with random values
     m, n = x_train.shape
     # np.random.seed(10)
-    W = np.random.random((n, c))
+    # W sould be initialized to very small random values
+    W = np.random.random((n, c)) * 0.001
     # np.random.seed(10)
     b = np.random.random(c)
 
